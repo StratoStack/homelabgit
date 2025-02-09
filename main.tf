@@ -18,5 +18,5 @@ provider "aws" {
 }
 
 resource "aws_s3_bucket" "homelab" {
-  bucket = "my-terraform-homelab-bucket"
+  bucket = "my-terraform-homelab-buckets"
 }
