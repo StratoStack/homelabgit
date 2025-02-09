@@ -16,7 +16,7 @@ jobs:
       plan-result: ${{ steps.plan.outputs.stdout }}
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v2
@@ -31,17 +31,11 @@ jobs:
         run: terraform plan -out=tfplan
         continue-on-error: false
 
-      - name: Upload Plan Artifact
-        uses: actions/upload-artifact@v3
+      - name: Upload Terraform Plan
+        uses: actions/upload-artifact@v4
         with:
           name: terraform-plan
           path: tfplan
-
-      - name: Request Approval for Terraform Apply
-        uses: hmarr/auto-approve-action@v3
-        with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-        continue-on-error: true
 
   terraform-apply:
     name: "Terraform Apply"
@@ -49,13 +43,11 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Await Manual Approval
-        uses: hmarr/auto-approve-action@v3
-        with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-        continue-on-error: true
+        run: echo "Please approve this job manually in GitHub Actions"
+        timeout-minutes: 60
 
       - name: Checkout repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v2
@@ -63,9 +55,11 @@ jobs:
           terraform_version: 1.6.0
 
       - name: Download Terraform Plan
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: terraform-plan
+          path: .
 
       - name: Terraform Apply
         run: terraform apply tfplan
+
